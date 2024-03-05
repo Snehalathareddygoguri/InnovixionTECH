@@ -1,0 +1,30 @@
+import requests 
+from bs4 import BeautifulSoup
+import pandas as pd
+def scraping_website(url):
+    r=requests.get(url)
+    #print(r.text)
+    soup=BeautifulSoup(r.content,"html.parser")
+    res=soup.find("div",class_="oxy-ihcoh9 eoxbb41")
+    #print(res.prettify())
+    elements=res.find_all("button",string=lambda text:"e")
+    t=[i.text.strip() for i in elements]
+    df=pd.DataFrame(t,columns=['Branches'])
+    file_format=input("Enter the file format (excel/csv):").lower()
+    if file_format=='excel':
+        file_name=input("Enter the file name:")
+        #Saving file with input filename
+        df.to_excel(f"{file_name}.xlsx",index=True)
+        print("Data is stored in Excel file successfully!!")
+    elif file_format=='csv':
+        file_name=input("Enter the file name:")
+        #Saving file with input filename
+        df.to_csv(f"{file_name}.csv",index=True)
+        print("Data stored in CSV file successfully!!")
+    else:
+        print("Invalid File Format..!Failed")
+#Example usage of scrape website
+url="https://oxylabs.io/"
+# For user input>>
+# url=input("Enter URL:")
+scraping_website(url)
